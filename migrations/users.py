@@ -1,24 +1,7 @@
 # migrations/users.py
-import os
-import hashlib
-import binascii
+from utils.security import hash_password
 from config import ADMIN, ADMIN_PASSWORD
 from database import get_conn
-
-
-def hash_password(password: str) -> str:
-    """
-    Sinh salt ngẫu nhiên và hash password với PBKDF2-HMAC-SHA256.
-    Kết quả là hex(salt + hash).
-    """
-    salt = os.urandom(16)
-    pwdhash = hashlib.pbkdf2_hmac(
-        'sha256',
-        password.encode('utf-8'),
-        salt,
-        100_000
-    )
-    return binascii.hexlify(salt + pwdhash).decode('ascii')
 
 USER_SCHEMA = """
 IF NOT EXISTS (
@@ -32,7 +15,6 @@ CREATE TABLE dbo.Users (
     CreatedAt    DATETIME      NOT NULL DEFAULT GETDATE()
 );
 """
-
 
 def init_schema():
     """
