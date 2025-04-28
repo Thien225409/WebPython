@@ -6,3 +6,5 @@ CONN_STR = (
     "PWD=Hungblack99@;"
 )
 PORT = 8000
+ADMIN = 'admin'
+ADMIN_PASSWORD = 'Hungblack99@'
