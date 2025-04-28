@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ submit_label }} sản phẩm</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>{{ submit_label }} sản phẩm</h1>
+  <form action="{{ action_url }}" method="post">
+    <p>
+      <label>Tên:<br>
+        <input type="text" name="name" value="{{ product.name }}">
+      </label>
+    </p>
+    <p>
+      <label>Giá (VND):<br>
+        <input type="number" name="price" value="{{ product.price }}">
+      </label>
+    </p>
+    <p>
+      <label>Kho:<br>
+        <input type="number" name="stock" value="{{ product.stock }}">
+      </label>
+    </p>
+    <p>
+      <label>Mô tả:<br>
+        <textarea name="description">{{ product.description }}</textarea>
+      </label>
+    </p>
+    <p>
+      <label>URL hình:<br>
+        <input type="text" name="image_url" value="{{ product.image_url }}">
+      </label>
+    </p>
+    <p>
+      <button type="submit">{{ submit_label }}</button>
+      <a href="{{ product and ('/product/' + product.product_id) or '/' }}">Hủy</a>
+    </p>
+  </form>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>{{ product.name }}</h1>
+  <p><strong>Giá:</strong> {{ product.price }} VND</p>
+  <p><strong>Kho:</strong> {{ product.stock }}</p>
+  <p><strong>Mô tả:</strong> {{ product.description }}</p>
+  <p>
+    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-width:300px;">
+  </p>
+  <p>
+    <a href="/product/{{ product.product_id }}/edit">✏️ Chỉnh sửa</a>
+    <form action="/product/{{ product.product_id }}/delete" method="post" style="display:inline;">
+      <button type="submit">🗑️ Xóa</button>
+    </form>
+  </p>
+</body>
+</html>

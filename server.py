@@ -1,0 +1,76 @@
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from config import PORT
+from urllib.parse import urlparse, parse_qs
+
+import routes.product_routes
+import routes.static_routes
+
+from routes.router import ROUTES
+class Request:
+    def __init__(self, method, path, query, headers, body, params=None):
+        self.method = method
+        self.path = path
+        self.query = query
+        self.headers = headers
+        self.body = body
+        self.params = params or {}
+
+class RequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self): 
+        self.handle_request('GET')
+
+    def do_POST(self): 
+        self.handle_request('POST')
+
+    def handle_request(self, method):
+        parsed = urlparse(self.path) # Tách path và query (sau dấu ?)
+        
+        path = parsed.path
+        query = parse_qs(parsed.query) # "sort=asc&page=2" → {"sort": ["asc"], "page": ["2"]}
+        length = int(self.headers.get('Content-Length', 0))
+        body = self.rfile.read(length).decode() if length else ''
+        
+        # Tìm xem URL + method này match với route nào
+        for route_method, regex, handler in ROUTES:
+            if route_method == method:
+                match = regex.match(path) # Áp regex vào path để kiểm tra xem có khớp không
+                if match:
+                    params = match.groupdict()
+                    request = Request(
+                        method  = method,
+                        path    = path,
+                        query   = query,
+                        headers = self.headers,
+                        body    = body,
+                        params  = params
+                    )
+                    # Trả về response cho CLIENT
+                    status, headers, response = handler(request)
+                    
+                    code, msg = status.split(' ', 1)
+                    self.send_response(int(code), msg)
+                    
+                    for key, value in headers:
+                        self.send_header(key, value)
+                    self.end_headers()
+                    
+                    # Viết body ra socket (nếu có)
+                    if response:
+                        self.wfile.write(response.encode())
+                    return
+
+        self.send_error(404, 'Page not found')
+
+def run():
+    server = HTTPServer(('', PORT), RequestHandler)
+    print(f"Serving on http://localhost:{PORT}")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nShutting down server...")
+        server.shutdown()
+    finally:
+        server.server_close()
+
+if __name__ == '__main__':
+    run()

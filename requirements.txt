@@ -1,0 +1,10 @@
+Tổng luồng xử lý
+1. Client gửi GET /product →
+2. Router tìm đến handler ctrl.index →
+3. Controller:
+    Lấy data từ model (Product.all()),
+    Render HTML qua Jinja2 (render_template),
+    Trả về (status, headers, body).
+5. Server nhận tuple → gọi send_response, send_header và ghi body ra socket.
+
+6. Client nhận trang HTML danh sách sản phẩm.
