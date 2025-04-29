@@ -2,6 +2,10 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from config import PORT
 from urllib.parse import urlparse, parse_qs
 
+from sessions.session_manager import get_session
+from models.users import User
+from controllers.auth_controller import parse_cookies
+
 import routes.auth_routes
 import routes.product_routes
 import routes.static_routes
@@ -45,6 +49,17 @@ class RequestHandler(BaseHTTPRequestHandler):
                         body    = body,
                         params  = params
                     )
+                    # --- Middleware: attach current user vào request ---
+                    raw = request.headers.get('Cookie', '')
+                    cookies = parse_cookies(raw)
+                    sid = cookies.get('session_id')
+                    if sid:
+                        sess = get_session(sid)
+                        request.user = User.find_by_id(sess['user_id']) if sess else None
+                    else:
+                        request.user = None
+                        
+                    # ------------------------------------------------------
                     # Trả về response cho CLIENT
                     status, headers, response = handler(request)
                     

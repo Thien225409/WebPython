@@ -1,49 +1,74 @@
 from urllib.parse import parse_qs
+import uuid
+from utils.csrf import gen_csrf_token, verify_csrf
 from models.users import User
 from utils.template_engine import render_template
 from sessions.session_manager import create_session, delete_session, get_session
 
+def render_form(template, request):
+    token = gen_csrf_token()
+    html = render_template(template, {'csrf_token': token})
+    return '200 OK', [
+        ('Content-Type','text/html; charset=utf-8'),
+        ('Set-Cookie', f'csrf_token={token}; Path=/')
+    ], html
+
 # Đăng kí người dùng 
 def register(request):
-    if request.method == 'POST':
-        data = parse_qs(request.body)
-        username = data.get('username', [''])[0]
-        password = data.get('password', [''])[0]
-        
-        # Kiểm tra nếu user đã tồn tại
-        try:
-            user = User.register(username, password)
-            return '303 See Other', [('Location', '/login')], ''
-        except ValueError as e:
-            html = render_template('register.html', {'error': str(e)})
-            return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
+    # GET
+    if request.method == 'GET':
+        return render_form('register.html', request)
+    # POST
+    if not verify_csrf(request):
+        return '403 Forbidden', [], 'CSRF token không hợp lệ.'
     
-    # GET: hiển thị form
-    html = render_template('register.html', {})
-    return '200 OK', [('Content-Type', 'text/html; charset=utf-8')], html
+    data = parse_qs(request.body)
+    username = data.get('username', [''])[0]
+    password = data.get('password', [''])[0]
+    
+    # Kiểm tra nếu user đã tồn tại
+    try:
+        User.register(username, password)
+        return '303 See Other', [('Location', '/login')], ''
+    except ValueError as e:
+        # giữ lại csrf_token cũ để render lại
+        token = parse_qs(request.headers.get('Cookies', ''))['csrf_token']
+        html = render_template('register.html', {
+            'error': str(e),
+            'csrf_token': token
+        })
+        
+        return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
 # GET & POST /login
 def login(request):
-    if request.method == 'POST':
-        data = parse_qs(request.body)
-        username = data.get('username', [''])[0]
-        password = data.get('password', [''])[0]
-        
-        # Truy vaan trong co so du lieu
-        user = User.find_by_username(username)
-        if user and user.check_password(password):
-            # Tạo session và lưu session_id vào cookie
-            sid = create_session(user.user_id)
-            headers = [
-                ('Set-Cookie', f'session_id={sid}; Path=/; HttpOnly'),
-                ('Location','/')
-            ]
-            return '303 See Other', headers, ''
-        # Sai thông tin: trả lại form với lỗi
-        html = render_template('login.html', {'error': 'Tên đăng nhập hoặc mật khẩu không đúng.'})
-        return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
+    if request.method == 'GET':
+        return render_form('login.html', request)
     
-    html = render_template('login.html', {})
-    return '200 OK', [('Content-Type', 'text/html; charset=utf-8')], html
+    # POST
+    if not verify_csrf(request):
+        return '403 Forbidden', [], 'CSRF token không hợp lệ.'
+    
+    data = parse_qs(request.body)
+    username = data.get('username', [''])[0]
+    password = data.get('password', [''])[0]
+    
+    # Truy vaan trong co so du lieu
+    user = User.find_by_username(username)
+    if user and user.check_password(password):
+        # Tạo session và lưu session_id vào cookie
+        sid = create_session(user.user_id)
+        headers = [
+            ('Set-Cookie', f'session_id={sid}; Path=/; HttpOnly'),
+            ('Location','/')
+        ]
+        return '303 See Other', headers, ''
+    # Sai thông tin: trả lại form với lỗi
+    token = parse_qs(request.headers.get('Cookie',''))['csrf_token']
+    html = render_template('login.html', {
+        'error': 'Tên đăng nhập hoặc mật khẩu không đúng.',
+        'csrf_token': token
+    })
+    return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
 
 def parse_cookies(cookie_header: str) -> dict:
     """

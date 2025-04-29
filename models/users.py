@@ -38,6 +38,28 @@ class User:
             created_at    = row.CreatedAt
         )
     @classmethod
+    def find_by_id(cls, user_id: int) -> Optional['User']:
+        """
+        Trả về User instance nếu tìm thấy theo UserID, ngược lại None.
+        """
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT UserID, Username, PasswordHash, CreatedAt"
+            " FROM dbo.Users WHERE UserID = ?;",
+            (user_id,)
+        )
+        row = cur.fetchone()
+        conn.close()
+        if not row:
+            return None
+        return cls(
+            user_id       = row.UserID,
+            username      = row.Username,
+            password_hash = row.PasswordHash,
+            created_at    = row.CreatedAt
+        )
+    @classmethod
     def register(cls, username: str, password: str) -> 'User':
         """
         Đăng ký user mới:
