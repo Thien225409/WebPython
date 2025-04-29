@@ -30,14 +30,8 @@ def register(request):
         User.register(username, password)
         return '303 See Other', [('Location', '/login')], ''
     except ValueError as e:
-        # giữ lại csrf_token cũ để render lại
-        token = parse_qs(request.headers.get('Cookie', ''))['csrf_token']
-        html = render_template('register.html', {
-            'error': str(e),
-            'csrf_token': token
-        })
-        
-        return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
+        pass
+        return '303 See Other', [('Location', '/login')], ''
 # GET & POST /login
 def login(request):
     if request.method == 'GET':

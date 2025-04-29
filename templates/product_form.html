@@ -8,6 +8,7 @@
 <body>
   <h1>{{ submit_label }} sản phẩm</h1>
   <form action="{{ action_url }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <p>
       <label>Tên:<br>
         <input type="text" name="name" value="{{ product.name }}">
