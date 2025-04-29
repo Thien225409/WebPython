@@ -1,7 +1,7 @@
 import os
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Đường dẫn file lưu session
 SESSION_FILE = os.path.join(os.path.dirname(__file__), 'sessions.json')
@@ -30,18 +30,25 @@ def _save_sessions():
 def create_session(user_id: int) -> str:
     _load_sessions()
     sid = str(uuid.uuid4())
+    expires_at = datetime.utcnow() + timedelta(hours=1)  # Session expires in 1 hour
     _sessions[sid] = {
         'user_id': user_id,
-        'create_at': datetime.utcnow().isoformat()
+        'created_at': datetime.utcnow(),
+        'expires_at': expires_at,
         # Khi login, controller sẽ thêm 'csrf_token' vào đây
     }
     _save_sessions()
     return sid
 
 # Lấy session theo session_id
-def get_session(sid: str):
-    _load_sessions()
-    return _sessions.get(sid)
+def get_session(sid: str) -> dict | None:
+    session = _sessions.get(sid)
+    if session:
+        if session['expires_at'] < datetime.utcnow():
+            delete_session(sid)  # Xóa session hết hạn
+            return None
+        return session
+    return None  # Session không tồn tại
 
 # Xóa session
 def delete_session(sid: str):

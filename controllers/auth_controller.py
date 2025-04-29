@@ -31,7 +31,7 @@ def register(request):
         return '303 See Other', [('Location', '/login')], ''
     except ValueError as e:
         # giữ lại csrf_token cũ để render lại
-        token = parse_qs(request.headers.get('Cookies', ''))['csrf_token']
+        token = parse_qs(request.headers.get('Cookie', ''))['csrf_token']
         html = render_template('register.html', {
             'error': str(e),
             'csrf_token': token
@@ -56,9 +56,13 @@ def login(request):
     if user and user.check_password(password):
         # Tạo session và lưu session_id vào cookie
         sid = create_session(user.user_id)
+        
+        # Sinh CSRF token mới
+        csrf_token = gen_csrf_token()
         headers = [
-            ('Set-Cookie', f'session_id={sid}; Path=/; HttpOnly'),
-            ('Location','/')
+            ('Set-Cookie', f'session_id={sid}; Path=/; HttpOnly; SameSite=Lax'),
+            ('Set-Cookie', f'csrf_token={csrf_token}; Path=/; HttpOnly; SameSite=Lax'),
+            ('Location', '/')
         ]
         return '303 See Other', headers, ''
     # Sai thông tin: trả lại form với lỗi
@@ -98,8 +102,9 @@ def logout(request):
     #    - Xóa cookie trên trình duyệt (Max-Age=0)
     #    - Chuyển hướng về trang /login bằng 303 See Other
     response_headers = [
-        ('Set-Cookie',  'session_id=; Path=/; Max-Age=0; HttpOnly'),
-        ('Location',    '/login'),
+        ('Set-Cookie', 'session_id=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax'),
+        ('Set-Cookie', 'csrf_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax'),
+        ('Location', '/login')
     ]
 
     # 5. Trả về status, headers và body rỗng
