@@ -33,6 +33,7 @@ def create_session(user_id: int) -> str:
     _sessions[sid] = {
         'user_id': user_id,
         'create_at': datetime.utcnow().isoformat()
+        # Khi login, controller sẽ thêm 'csrf_token' vào đây
     }
     _save_sessions()
     return sid

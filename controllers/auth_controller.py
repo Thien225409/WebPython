@@ -1,5 +1,4 @@
 from urllib.parse import parse_qs
-import uuid
 from utils.csrf import gen_csrf_token, verify_csrf
 from models.users import User
 from utils.template_engine import render_template
@@ -70,6 +69,7 @@ def login(request):
     })
     return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
 
+# Phân tích header Cookie thành dict 
 def parse_cookies(cookie_header: str) -> dict:
     """
     Chuyển chuỗi Cookie header thành dict:

@@ -1,4 +1,4 @@
-Tổng luồng xử lý
+------------Tổng luồng xử lý----------
 1. Client gửi GET /product →
 2. Router tìm đến handler ctrl.index →
 3. Controller:
@@ -8,3 +8,13 @@ Tổng luồng xử lý
 5. Server nhận tuple → gọi send_response, send_header và ghi body ra socket.
 
 6. Client nhận trang HTML danh sách sản phẩm.
+
+-------------XÁC THỰC USER------------
+Luồng hoạt động tóm tắt
+1. Đăng nhập → kiểm tra mật khẩu → create_session → lưu user_id + csrf_token → set cookie session_id.
+
+2. Mỗi request → middleware parse cookie → load session vào request.session.
+
+3. Form POST → client gửi kèm _csrf_token → middleware/decorator gọi verify_csrf so khớp với session['csrf_token'].
+
+4. Đăng xuất → delete_session + trả header xóa cookie + redirect.
