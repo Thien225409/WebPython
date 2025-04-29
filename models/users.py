@@ -53,8 +53,6 @@ class User:
                 "INSERT INTO dbo.Users (Username, PasswordHash) VALUES (?, ?);",
                 (username, pwd_hash)
             )
-            cursor.execute("SELECT SCOPE_IDENTITY() AS new_id")
-            new_id = int(cursor.fetchone().new_id)
         except pyodbc.IntegrityError:
             conn.rollback()
             raise ValueError(f"Username '{username}' đã tồn tại.")

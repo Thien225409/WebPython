@@ -1,9 +1,19 @@
-<form method="POST">
-    <label for="username">Tên đăng nhập</label>
-    <input type="text" id="username" name="username" required>
-    
-    <label for="password">Mật khẩu</label>
-    <input type="password" id="password" name="password" required>
-    
-    <button type="submit">Đăng nhập</button>
-</form>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <title>Đăng nhập</title>
+</head>
+<body>
+    <h1>Đăng nhập</h1>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+    <form action="/login" method="POST">
+        <label>Tên đăng nhập: <input type="text" name="username" required></label><br>
+        <label>Mật khẩu: <input type="password" name="password" required></label><br>
+        <button type="submit">Đăng nhập</button>
+    </form>
+    <p>Chưa có tài khoản? <a href="/register">Đăng ký</a></p>
+</body>
+</html>

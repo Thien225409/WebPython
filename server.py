@@ -2,6 +2,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from config import PORT
 from urllib.parse import urlparse, parse_qs
 
+import routes.auth_routes
 import routes.product_routes
 import routes.static_routes
 
