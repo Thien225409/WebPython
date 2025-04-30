@@ -8,3 +8,5 @@ CONN_STR = (
 PORT = 8000
 ADMIN = 'admin'
 ADMIN_PASSWORD = 'Hungblack99@'
+# Thời gian sống của session (giờ)
+SESSION_TTL_HOURS = 1

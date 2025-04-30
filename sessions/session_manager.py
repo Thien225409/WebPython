@@ -1,59 +1,70 @@
-import os
-import json
+from database import get_conn
 import uuid
-from datetime import datetime, timedelta
-
-# Đường dẫn file lưu session
-SESSION_FILE = os.path.join(os.getcwd(), 'sessions.json')
-_sessions = {}
-
-#Tải sessions từ file
-def _load_sessions():
-    global _sessions
-    # Nếu file chưa tồn tại, khơỉ tạo sesions rỗng
-    if not os.path.exists(SESSION_FILE):
-        _sessions = {}
-        return
-    # Nếu file trống hoặc JSON sai định dạng, cũng khởi tạo sessions rỗng
-    try:
-        with open(SESSION_FILE, 'r') as f:
-            _sessions = json.load(f)
-    except (json.JSONDecodeError, ValueError):
-        _sessions = {}
-
-# Lưu sessions vào file
-def _save_sessions():
-    with open(SESSION_FILE, 'w') as f:
-        json.dump(_sessions, f)
+from datetime import datetime, timedelta, timezone
+from config import SESSION_TTL_HOURS
 
 # Tạo session mới, trả về session_id
 def create_session(user_id: int) -> str:
-    _load_sessions()
-    sid = str(uuid.uuid4())
-    now_iso = datetime.utcnow().isoformat()
-    expire_iso = (datetime.utcnow() + timedelta(hours=1)).isoformat()
-    _sessions[sid] = {
-        'user_id': user_id,
-        'create_at': now_iso,
-        'expires_at': expire_iso
-    }
-    _save_sessions()
-    return sid
+    session_id = str(uuid.uuid4()) # Tạo session id
+    
+    now = datetime.now(timezone.utc)
+    now_iso = now.isoformat()
+    expire_iso = (now + timedelta(hours=SESSION_TTL_HOURS)).isoformat()
 
-def get_session(sid: str):
-    _load_sessions()
-    s = _sessions.get(sid)
-    if not s:
-        return None
-    # So s['expires_at'] là chuỗi ISO → parse bằng fromisoformat
-    if datetime.fromisoformat(s['expires_at']) < datetime.utcnow():
-        delete_session(sid)
-        return None
-    return s
-
+    
+    with get_conn() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO dbo.Sessions (SessionId, UserId, CreatedAt, ExpiresAt) VALUES (?, ?, ?, ?)",
+            (session_id, user_id, now_iso, expire_iso)
+        )
+    return session_id
 # Xóa session
 def delete_session(sid: str):
-    _load_sessions()
-    if sid in _sessions:
-        del _sessions[sid]
-        _save_sessions()
+    with get_conn() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "DELETE FROM dbo.Sessions WHERE SessionId = ?",
+            sid
+        )
+
+def get_session(sid: str):
+    """
+    Lấy thông tin phiên (session) từ session_id.
+
+    Tham số:
+        sid (str): Mã định danh phiên do server tạo (UUID).
+
+    Trả về:
+        dict: {
+            'user_id': int,          # ID người dùng
+            'create_at': str,        # ISO timestamp khi tạo phiên
+            'expires_at': str        # ISO timestamp khi hết hạn
+        } nếu session tồn tại và còn hạn.
+        None: nếu session không tồn tại hoặc đã hết hạn (khi hết hạn, session cũng được xóa).
+    """
+    with get_conn() as conn:
+        cursor = conn.cursor()
+        row = cursor.execute(
+            """
+            SELECT UserId,
+                CONVERT(varchar(33), CreatedAt, 126),
+                CONVERT(varchar(33), ExpiresAt, 126)
+            FROM dbo.Sessions
+            WHERE SessionId = ?
+            """,
+            sid
+        ).fetchone()
+    if not row:
+        return None
+    user_id, created, expires = row
+    if datetime.fromisoformat(expires) < datetime.now(timezone.utc):
+        delete_session(sid)
+        return None
+    session_dict = {
+        'session_id': sid,
+        'user_id': user_id,
+        'create_at': created,
+        'expires_at': expires
+    }
+    return session_dict

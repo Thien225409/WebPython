@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from controllers import product_controller as pc
 from models.users import User
 from models import Product
-from utils.conftest import fake_request
+from tests.conftest import fake_request
 
 @pytest.fixture
 def admin_user():

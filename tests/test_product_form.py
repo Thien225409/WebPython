@@ -5,12 +5,11 @@ from models import Product
 from models.users import User
 from config import ADMIN_PASSWORD
 from urllib.parse import urlencode
-from utils.conftest import fake_request
+from tests.conftest import fake_request
 from sessions.session_manager import create_session, get_session
-import sessions.session_manager as sm
+# import sessions.session_manager as sm  # Không còn dùng file-based sessions
 from routes.auth_middleware import require_auth
-from types import SimpleNamespace
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 @pytest.fixture
 def admin_user():
@@ -20,23 +19,16 @@ def admin_user():
 
 # -- Test form GET sản phẩm --
 def test_get_new_product_form(admin_user):
-    # Gọi GET và lấy headers + html
     req = fake_request(method='GET', path='/product/new', cookies={}, user=admin_user)
     status, headers, html = product_form(req)
-
     assert status == '200 OK'
-
-    # Lấy CSRF token từ Set-Cookie
     raw = [v for k, v in headers if k == 'Set-Cookie' and 'csrf_token=' in v][0]
     token = raw.split('=')[1].split(';')[0]
-
-    # Kiểm tra CSRF cookie và input trong form
     assert any(k=='Set-Cookie' and 'csrf_token=' in v for k,v in headers)
     assert f'name="csrf_token" value="{token}"' in html
 
 
 def test_get_edit_product_form(admin_user):
-    # Tạo sản phẩm mẫu
     p = Product.create('Sản phẩm edit', 10000, 1, 'Mô tả', '/img.png')
     req = fake_request(
         method='GET',
@@ -46,13 +38,9 @@ def test_get_edit_product_form(admin_user):
         params={'product_id': str(p.product_id)}
     )
     status, headers, html = product_form(req)
-
     assert status == '200 OK'
-    # Dữ liệu cũ xuất hiện
     assert f'value="{p.name}"' in html
     assert str(p.price) in html
-
-    # CSRF token mới trong Set-Cookie và input
     raw = [v for k, v in headers if k == 'Set-Cookie' and 'csrf_token=' in v][0]
     token = raw.split('=')[1].split(';')[0]
     assert f'name="csrf_token" value="{token}"' in html
@@ -117,9 +105,22 @@ def test_require_auth_allows_logged_in():
     assert body == 'OK'
 
 # -- Session expire test --
+from database import get_conn
+
 def test_session_expire():
+    # Tạo session mới (DB-backed)
     sid = create_session(1)
-    sm._load_sessions()
-    sm._sessions[sid]['expires_at'] = (datetime.utcnow() - timedelta(hours=2)).isoformat()
-    sm._save_sessions()
+    # Giả lập session đã hết hạn trong DB
+    past = datetime.now(timezone.utc) - timedelta(hours=2)
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE dbo.Sessions SET ExpiresAt = ? WHERE SessionId = ?", 
+        past.isoformat(), sid
+    )
+    try:
+        conn.commit()
+    except Exception:
+        pass
+    # Khi gọi get_session, session phải bị coi là hết hạn
     assert get_session(sid) is None
