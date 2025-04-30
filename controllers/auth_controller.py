@@ -7,7 +7,7 @@ from sessions.session_manager import create_session, delete_session, get_session
 
 def render_form(template, request):
     token = gen_csrf_token()
-    html = render_template(template, {'csrf_token': token})
+    html = render_template(template, {'csrf_token': token}, request=request)
     return '200 OK', [
         ('Content-Type','text/html; charset=utf-8'),
         ('Set-Cookie', f'csrf_token={token}; Path=/')
@@ -37,26 +37,6 @@ def register(request):
 def login(request):
     if request.method == 'GET':
         return render_form('login.html', request)
-    
-     # DEBUG: in thông tin CSRF + auth
-    body = parse_qs(request.body)
-    form_token = body.get('csrf_token', [''])[0]
-    cookie_header = request.headers.get('Cookie', '')
-    cookies = parse_cookies(cookie_header)
-    cookie_token = cookies.get('csrf_token')
-
-    username = body.get('username', [''])[0]
-    password = body.get('password', [''])[0]
-
-    # Lấy user và kiểm tra password
-    user = User.find_by_username(username)
-    ok_user = bool(user)
-    ok_pass = user.check_password(password) if user else None
-
-    print(f"[LOGIN-DEBUG] form_token={form_token!r}, cookie_token={cookie_token!r}, "
-          f"username={username!r}, password={password!r}, "
-          f"user_found={ok_user}, pass_match={ok_pass}")
-    
     # POST
     if not verify_csrf(request):
         return '403 Forbidden', [], 'CSRF token không hợp lệ.'
@@ -84,7 +64,7 @@ def login(request):
     html = render_template('login.html', {
         'error': 'Tên đăng nhập hoặc mật khẩu không đúng.',
         'csrf_token': token
-    })
+    }, request=request)
     return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
 
 # Phân tích header Cookie thành dict 

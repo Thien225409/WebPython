@@ -1,48 +1,49 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ submit_label }} sản phẩm</title>
-  <link rel="stylesheet" href="/public/style.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}{{ submit_label }} sản phẩm – Meat Shop{% endblock %}
+
+{% block content %}
   <h1>{{ submit_label }} sản phẩm</h1>
+
   {% if error %}
-    <div style="color: red; font-weight: bold; margin-bottom: 1em;">
-      {{ error }}
-    </div>
+    <div class="alert alert-error">{{ error }}</div>
   {% endif %}
+
   <form action="{{ action_url }}" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
     <p>
       <label>Tên:<br>
-        <input type="text" name="name" value="{{ product.name }}">
+        <input type="text" name="name" value="{{ product.name or '' }}">
       </label>
     </p>
+
     <p>
       <label>Giá (VND):<br>
-        <input type="number" name="price" value="{{ product.price }}">
+        <input type="number" name="price" value="{{ product.price or '' }}">
       </label>
     </p>
+
     <p>
       <label>Kho:<br>
-        <input type="number" name="stock" value="{{ product.stock }}">
+        <input type="number" name="stock" value="{{ product.stock or '' }}">
       </label>
     </p>
+
     <p>
       <label>Mô tả:<br>
-        <textarea name="description">{{ product.description }}</textarea>
+        <textarea name="decription">{{ product.decription or '' }}</textarea>
       </label>
     </p>
+
     <p>
       <label>URL hình:<br>
-        <input type="text" name="image_url" value="{{ product.image_url }}">
+        <input type="text" name="image_url" value="{{ product.image_url or '' }}">
       </label>
     </p>
+
     <p>
       <button type="submit">{{ submit_label }}</button>
-      <a href="{{ product and ('/product/' ~ product.product_id) or '/' }}">Hủy</a>
+      <a href="{% if product %}/product/{{ product.product_id }}{% else %}/{% endif %}">Hủy</a>
     </p>
   </form>
-</body>
-</html>
+{% endblock %}

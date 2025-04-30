@@ -1,20 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách sản phẩm</title>
-    <link rel="stylesheet" href="/public/style.css">
-</head>
-<body>
-    <h1>Danh sách sản phẩm</h1>
-    <p>
-        <a href="/product/new">➕ Tạo sản phẩm mới</a>
-    </p>
-    <ul>
-        {% for p in products %}
-            <li>{{ p.name }} — {{ p.price }} VND</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Danh sách sản phẩm – Meat Shop{% endblock %}
+
+{% block content %}
+  <h1>Danh sách sản phẩm</h1>
+  {% if request.user and request.user.is_admin %}
+    <p><a href="/product/new">➕ Tạo sản phẩm mới</a></p>
+  {% endif %}
+
+  <div class="product-grid">
+    {% for p in products %}
+      <div class="product-card">
+        <a href="/product/{{ p.product_id }}">
+          <img src="{{ p.image_url }}" alt="{{ p.name }}">
+        </a>
+        <div class="card-body">
+          <h2>{{ p.name }}</h2>
+          <p class="price">{{ "{:,.0f}".format(p.price) }}₫</p>
+
+          {% if request.user and not request.user.is_admin %}
+            <form action="/cart/add" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="product_id" value="{{ p.product_id }}">
+              <button type="submit">Thêm vào giỏ</button>
+            </form>
+          {% endif %}
+
+          {% if request.user and request.user.is_admin %}
+            <p>
+              <a href="/product/{{ p.product_id }}/edit">✏️</a>
+              <form action="/product/{{ p.product_id }}/delete" method="post" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit">🗑️</button>
+              </form>
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

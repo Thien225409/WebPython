@@ -21,7 +21,7 @@ def test_create_product_success(admin_user, csrf_token):
         'name': 'Thịt ba rọi',
         'price': '180000',
         'stock': '10',
-        'description': 'Ngon mềm, thích hợp nướng',
+        'decription': 'Ngon mềm, thích hợp nướng',
         'image_url': '/public/images/ba_roi.png',
         'csrf_token': csrf_token
     })

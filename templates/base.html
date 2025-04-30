@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Meat Shop{% endblock %}</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">
+      <a href="/"><img src="/public/images/logo.png" alt="Meat Shop"></a>
+    </div>
+    <nav class="main-nav">
+      <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Trang chủ</a>
+      <a href="/product" class="nav-link {% if request.path.startswith('/product') and request.path == '/product' %}active{% endif %}">Sản phẩm</a>
+
+      {% if request.user %}
+        <a href="/cart" class="cart-link">
+          🛒
+          {% if cart_count and cart_count > 0 %}
+            <span class="badge">{{ cart_count }}</span>
+          {% endif %}
+        </a>
+        <div class="user-menu">
+          <button class="menu-btn">{{ request.user.username }} ▼</button>
+          <div class="dropdown">
+            <a href="/profile">Profile</a>
+            <a href="/orders">Đơn hàng</a>
+            <a href="/logout">Đăng xuất</a>
+          </div>
+        </div>
+      {% else %}
+        <a href="/login" class="nav-link {% if request.path == '/login' %}active{% endif %}">Đăng nhập</a>
+        <a href="/register" class="nav-link {% if request.path == '/register' %}active{% endif %}">Đăng ký</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="site-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">&copy; 2025 Meat Shop</footer>
+</body>
+</html>

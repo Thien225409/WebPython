@@ -1,20 +1,31 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8">
-    <title>Đăng nhập</title>
-</head>
-<body>
-    <h1>Đăng nhập</h1>
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
-    <form action="/login" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <label>Tên đăng nhập: <input type="text" name="username" required></label><br>
-        <label>Mật khẩu: <input type="password" name="password" required></label><br>
-        <button type="submit">Đăng nhập</button>
-    </form>
-    <p>Chưa có tài khoản? <a href="/register">Đăng ký</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Đăng nhập – Meat Shop{% endblock %}
+
+{% block content %}
+  <h1>Đăng nhập</h1>
+
+  {% if error %}
+    <p class="alert alert-error">{{ error }}</p>
+  {% endif %}
+
+  <form action="/login" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <p>
+      <label>Tên đăng nhập:<br>
+        <input type="text" name="username" required>
+      </label>
+    </p>
+
+    <p>
+      <label>Mật khẩu:<br>
+        <input type="password" name="password" required>
+      </label>
+    </p>
+
+    <p>
+      <button type="submit">Đăng nhập</button>
+      <a href="/register">Chưa có tài khoản?</a>
+    </p>
+  </form>
+{% endblock %}
