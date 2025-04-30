@@ -4,7 +4,7 @@ def require_auth(handler):
     Nếu chưa có session['user_id'], sẽ redirect về /login.
     """
     def wrapped(request, *args, **kwargs):
-        if not request.session.get('user_id'):
+        if not getattr(request, 'user', None):
             return '303 See Other', [('Location', '/login')], ''
         return handler(request, *args, **kwargs)
     return wrapped

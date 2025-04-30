@@ -58,7 +58,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         request.user = User.find_by_id(sess['user_id']) if sess else None
                     else:
                         request.user = None
-                        
+                    
                     # ------------------------------------------------------
                     # Trả về response cho CLIENT
                     status, headers, response = handler(request)

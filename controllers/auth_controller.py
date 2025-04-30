@@ -1,6 +1,7 @@
 from urllib.parse import parse_qs
 from utils.csrf import gen_csrf_token, verify_csrf
 from models.users import User
+from utils.security import hash_password
 from utils.template_engine import render_template
 from sessions.session_manager import create_session, delete_session, get_session
 
@@ -31,11 +32,30 @@ def register(request):
         return '303 See Other', [('Location', '/login')], ''
     except ValueError as e:
         pass
-        return '303 See Other', [('Location', '/login')], ''
+    return '303 See Other', [('Location', '/login')], ''
 # GET & POST /login
 def login(request):
     if request.method == 'GET':
         return render_form('login.html', request)
+    
+     # DEBUG: in thông tin CSRF + auth
+    body = parse_qs(request.body)
+    form_token = body.get('csrf_token', [''])[0]
+    cookie_header = request.headers.get('Cookie', '')
+    cookies = parse_cookies(cookie_header)
+    cookie_token = cookies.get('csrf_token')
+
+    username = body.get('username', [''])[0]
+    password = body.get('password', [''])[0]
+
+    # Lấy user và kiểm tra password
+    user = User.find_by_username(username)
+    ok_user = bool(user)
+    ok_pass = user.check_password(password) if user else None
+
+    print(f"[LOGIN-DEBUG] form_token={form_token!r}, cookie_token={cookie_token!r}, "
+          f"username={username!r}, password={password!r}, "
+          f"user_found={ok_user}, pass_match={ok_pass}")
     
     # POST
     if not verify_csrf(request):
@@ -56,7 +76,7 @@ def login(request):
         headers = [
             ('Set-Cookie', f'session_id={sid}; Path=/; HttpOnly; SameSite=Lax'),
             ('Set-Cookie', f'csrf_token={csrf_token}; Path=/; HttpOnly; SameSite=Lax'),
-            ('Location', '/')
+            ('Location', '/product')
         ]
         return '303 See Other', headers, ''
     # Sai thông tin: trả lại form với lỗi

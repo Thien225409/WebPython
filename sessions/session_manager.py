@@ -30,25 +30,26 @@ def _save_sessions():
 def create_session(user_id: int) -> str:
     _load_sessions()
     sid = str(uuid.uuid4())
-    expires_at = datetime.utcnow() + timedelta(hours=1)  # Session expires in 1 hour
+    now_iso = datetime.utcnow().isoformat()
+    expire_iso = (datetime.utcnow() + timedelta(hours=1)).isoformat()
     _sessions[sid] = {
         'user_id': user_id,
-        'created_at': datetime.utcnow(),
-        'expires_at': expires_at,
-        # Khi login, controller sẽ thêm 'csrf_token' vào đây
+        'create_at': now_iso,
+        'expires_at': expire_iso
     }
     _save_sessions()
     return sid
 
-# Lấy session theo session_id
-def get_session(sid: str) -> dict | None:
-    session = _sessions.get(sid)
-    if session:
-        if session['expires_at'] < datetime.utcnow():
-            delete_session(sid)  # Xóa session hết hạn
-            return None
-        return session
-    return None  # Session không tồn tại
+def get_session(sid: str):
+    _load_sessions()
+    s = _sessions.get(sid)
+    if not s:
+        return None
+    # So s['expires_at'] là chuỗi ISO → parse bằng fromisoformat
+    if datetime.fromisoformat(s['expires_at']) < datetime.utcnow():
+        delete_session(sid)
+        return None
+    return s
 
 # Xóa session
 def delete_session(sid: str):

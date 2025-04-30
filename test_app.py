@@ -1,122 +1,148 @@
+import uuid
 import re
 import pytest
 import requests
-from urllib.parse import urljoin, parse_qs
+from urllib.parse import urljoin
 
 BASE_URL = "http://localhost:8000"
 
-@pytest.fixture
-def session():
-    return requests.Session()
-
-def extract_csrf(response):
-    # Tìm giá trị của hidden input name="csrf_token" trong HTML
-    m = re.search(r'name="csrf_token" value="([^"]+)"', response.text)
+def extract_csrf(html: str) -> str:
+    m = re.search(r'name="csrf_token" value="([^"]+)"', html)
     assert m, "Không tìm thấy csrf_token trong form"
     return m.group(1)
 
-def test_public_product_list_and_detail(session):
-    # 1. GET /product → 200 OK
-    r = session.get(urljoin(BASE_URL, "/product"))
-    assert r.status_code == 200
-
-    # 2. GET /product/1 → 200 OK (giả định có product_id=1)
-    r2 = session.get(urljoin(BASE_URL, "/product/1"))
-    assert r2.status_code == 200
-
-def test_register_login_logout_flow(session):
-    # 3. GET /register → form với CSRF
-    r = session.get(urljoin(BASE_URL, "/register"))
-    assert r.status_code == 200
-    csrf = extract_csrf(r)
-
-    # 4. POST /register (thiếu CSRF) → 403
-    r_bad = session.post(urljoin(BASE_URL, "/register"), data={"username":"u1","password":"p1"})
-    assert r_bad.status_code == 403
-
-    # 5. POST /register (có CSRF) → 303 redirect
-    r2 = session.post(
+@pytest.fixture
+def admin_session():
+    s = requests.Session()
+    # 1) Đăng ký admin (nếu chưa có thì thành công, nếu đã có thì vẫn redirect)
+    r = s.get(urljoin(BASE_URL, "/register"))
+    csrf = extract_csrf(r.text)
+    s.post(
         urljoin(BASE_URL, "/register"),
-        data={"username":"testuser","password":"secret","csrf_token": csrf},
+        data={"username": "admin", "password": "Hungblack99@", "csrf_token": csrf},
+        allow_redirects=False
+    )
+    # 2) Đăng nhập admin
+    r2 = s.get(urljoin(BASE_URL, "/login"))
+    csrf2 = extract_csrf(r2.text)
+    r3 = s.post(
+        urljoin(BASE_URL, "/login"),
+        data={"username": "admin", "password": "Hungblack99@", "csrf_token": csrf2},
+        allow_redirects=False
+    )
+    assert r3.status_code == 303 and r3.headers["Location"] == "/product"
+    return s
+
+@pytest.fixture
+def user_session():
+    s = requests.Session()
+    # Tạo và login user random
+    username = f"user_{uuid.uuid4().hex[:8]}"
+    password = "userpass"
+    # register
+    r = s.get(urljoin(BASE_URL, "/register"))
+    csrf = extract_csrf(r.text)
+    s.post(
+        urljoin(BASE_URL, "/register"),
+        data={"username": username, "password": password, "csrf_token": csrf},
+        allow_redirects=False
+    )
+    # login
+    r2 = s.get(urljoin(BASE_URL, "/login"))
+    csrf2 = extract_csrf(r2.text)
+    r3 = s.post(
+        urljoin(BASE_URL, "/login"),
+        data={"username": username, "password": password, "csrf_token": csrf2},
+        allow_redirects=False
+    )
+    assert r3.status_code == 303 and r3.headers["Location"] == "/product"
+    return s
+
+def test_non_admin_cannot_access_crud(user_session):
+    s = user_session
+    # GET form new
+    r = s.get(urljoin(BASE_URL, "/product/new"), allow_redirects=False)
+    assert r.status_code == 303 and r.headers["Location"] == "/login"
+    # POST create
+    r2 = s.post(urljoin(BASE_URL, "/product/create"), data={}, allow_redirects=False)
+    assert r2.status_code == 303 and r2.headers["Location"] == "/login"
+    # GET edit
+    r3 = s.get(urljoin(BASE_URL, "/product/1/edit"), allow_redirects=False)
+    assert r3.status_code == 303 and r3.headers["Location"] == "/login"
+    # POST update
+    r4 = s.post(urljoin(BASE_URL, "/product/1/edit"), data={}, allow_redirects=False)
+    assert r4.status_code == 303 and r4.headers["Location"] == "/login"
+    # POST delete
+    r5 = s.post(urljoin(BASE_URL, "/product/1/delete"), data={}, allow_redirects=False)
+    assert r5.status_code == 303 and r5.headers["Location"] == "/login"
+
+def test_admin_can_full_crud(admin_session):
+    s = admin_session
+
+    # 1) GET /product/new → 200 + CSRF
+    r = s.get(urljoin(BASE_URL, "/product/new"))
+    assert r.status_code == 200
+    csrf1 = extract_csrf(r.text)
+
+    # 2) POST /product/create → 303 → /product/{id}
+    name = f"P_{uuid.uuid4().hex[:6]}"
+    r2 = s.post(
+        urljoin(BASE_URL, "/product/create"),
+        data={
+            "name": name,
+            "price": "123.45",
+            "stock": "7",
+            "description": "desc",
+            "image_url": "",
+            "csrf_token": csrf1
+        },
         allow_redirects=False
     )
     assert r2.status_code == 303
-    assert r2.headers["Location"] == "/login"
+    loc = r2.headers["Location"]
+    assert loc.startswith("/product/")
+    pid = loc.split("/")[-1]
 
-    # 6. GET /login và lấy CSRF
-    r3 = session.get(urljoin(BASE_URL, "/login"))
+    # 3) GET /product/{pid} → 200 + xem đúng tên
+    r3 = s.get(urljoin(BASE_URL, f"/product/{pid}"))
     assert r3.status_code == 200
-    csrf2 = extract_csrf(r3)
+    assert name in r3.text
 
-    # 7. POST /login (có CSRF) → 303 redirect home
-    r4 = session.post(
-        urljoin(BASE_URL, "/login"),
-        data={"username":"testuser","password":"secret","csrf_token": csrf2},
-        allow_redirects=False
-    )
-    assert r4.status_code == 303
-    assert r4.headers["Location"] == "/"
+    # 4) GET /product/{pid}/edit → 200 + CSRF
+    r4 = s.get(urljoin(BASE_URL, f"/product/{pid}/edit"))
+    assert r4.status_code == 200
+    csrf2 = extract_csrf(r4.text)
 
-    # 8. GET /logout → 303 redirect /login
-    r5 = session.get(urljoin(BASE_URL, "/logout"), allow_redirects=False)
-    assert r5.status_code == 303
-    assert r5.headers["Location"] == "/login"
-
-def test_protected_product_crud_requires_login(session):
-    # A. Unauthenticated: GET new → redirect /login
-    r = session.get(urljoin(BASE_URL, "/product/new"), allow_redirects=False)
-    assert r.status_code == 303 and r.headers["Location"] == "/login"
-
-    # B. Unauthenticated: POST create → redirect /login
-    r2 = session.post(urljoin(BASE_URL, "/product/create"), allow_redirects=False)
-    assert r2.status_code == 303 and r2.headers["Location"] == "/login"
-
-def test_product_crud_flow(session):
-    # Đăng ký + login
-    r = session.get(urljoin(BASE_URL, "/register"))
-    csrf = extract_csrf(r)
-    session.post(urljoin(BASE_URL, "/register"), data={"username":"cruduser","password":"pwd","csrf_token": csrf})
-    r = session.get(urljoin(BASE_URL, "/login"))
-    csrf = extract_csrf(r)
-    session.post(urljoin(BASE_URL, "/login"), data={"username":"cruduser","password":"pwd","csrf_token": csrf})
-
-    # GET /product/new → có form + CSRF
-    r = session.get(urljoin(BASE_URL, "/product/new"))
-    assert r.status_code == 200
-    csrf = extract_csrf(r)
-
-    # POST /product/create với CSRF → redirect về /product
-    r2 = session.post(
-        urljoin(BASE_URL, "/product/create"),
-        data={"name":"Thịt ba chỉ","price":"100000","stock":"5","category_id":"1","description":"Test","csrf_token": csrf},
-        allow_redirects=False
-    )
-    assert r2.status_code == 303 and r2.headers["Location"] == "/product"
-
-    # Giả định sản phẩm mới có ID= last, lấy detail
-    # Bạn có thể parse id từ redirect URL hoặc query DB trực tiếp
-    # Ví dụ tạm test GET /product/2
-    r3 = session.get(urljoin(BASE_URL, "/product/2"))
-    assert r3.status_code == 200
-
-    # Test Edit
-    r4 = session.get(urljoin(BASE_URL, "/product/2/edit"))
-    csrf = extract_csrf(r4)
-    r5 = session.post(
-        urljoin(BASE_URL, "/product/2/edit"),
-        data={"name":"Ba chỉ sửa","price":"110000","stock":"10","category_id":"1","description":"Sửa","csrf_token": csrf},
+    # 5) POST update → 303 → /product/{pid}
+    new_name = name + "_E"
+    r5 = s.post(
+        urljoin(BASE_URL, f"/product/{pid}/edit"),
+        data={
+            "name": new_name,
+            "price": "543.21",
+            "stock": "3",
+            "description": "edited",
+            "image_url": "",
+            "csrf_token": csrf2
+        },
         allow_redirects=False
     )
     assert r5.status_code == 303
+    assert r5.headers["Location"] == f"/product/{pid}"
 
-    # Test Delete
-    # Lấy CSRF mới nếu cần form delete, hoặc reuse cookie
-    r6 = session.post(
-        urljoin(BASE_URL, "/product/2/delete"),
-        data={"csrf_token": csrf},
+    # 6) GET detail again → 200 + tên mới
+    r6 = s.get(urljoin(BASE_URL, f"/product/{pid}"))
+    assert new_name in r6.text
+
+    # 7) POST delete → 303 → /product
+    r7 = s.post(
+        urljoin(BASE_URL, f"/product/{pid}/delete"),
+        data={"csrf_token": csrf2},
         allow_redirects=False
     )
-    assert r6.status_code == 303
+    assert r7.status_code == 303
+    assert r7.headers["Location"] == "/product"
 
-    # Đăng xuất
-    session.get(urljoin(BASE_URL, "/logout"))
+    # 8) GET list → không thấy sản phẩm
+    r8 = s.get(urljoin(BASE_URL, "/product"))
+    assert new_name not in r8.text
