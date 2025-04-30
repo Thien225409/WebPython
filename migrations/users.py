@@ -12,7 +12,8 @@ CREATE TABLE dbo.Users (
     UserID       INT           IDENTITY(1,1) PRIMARY KEY,
     Username     NVARCHAR(50)  NOT NULL UNIQUE,
     PasswordHash NVARCHAR(200) NOT NULL,
-    CreatedAt    DATETIME      NOT NULL DEFAULT GETDATE()
+    CreatedAt    DATETIME      NOT NULL DEFAULT GETDATE(),
+    IsAdmin      BIT           NOT NULL DEFAULT 0
 );
 """
 
@@ -49,7 +50,7 @@ def seed_data():
         print("Seed dữ liệu Users (tài khoản admin)...")
         pwd_hash = hash_password(ADMIN_PASSWORD)
         cur.execute(
-            "INSERT INTO dbo.Users (Username, PasswordHash) VALUES (?, ?);",
+            "INSERT INTO dbo.Users (Username, PasswordHash, IsAdmin) VALUES (?, ?, 1);",
             (ADMIN, pwd_hash)
         )
         print(f"✅ Đã thêm user '{ADMIN}' thành công.")

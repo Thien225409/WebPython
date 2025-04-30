@@ -84,12 +84,15 @@ class Product:
                 OUTPUT INSERTED.ProductID
                 VALUES (?, ?, ?, ?, ?);
             """,
-            name, price, stock, decription, image_url
+            (name, price, stock, decription, image_url)
         )
         # OUTPUT INSERTED.<PK> sẽ trả về một recordset, fetchone()[0] là ID mới
         row = cursor.fetchone()
         new_id = int(row[0])
-        return Product.find_by_id(new_id)
+        print(f"[DEBUG] Created product ID: {new_id}")  # ✅ In ra ID được tạo
+        product = Product.find_by_id(new_id)
+        print(f"[DEBUG] Product created object: {product}")  # ✅ In ra object trả về
+        return product
     # end create
     
     def update(self):

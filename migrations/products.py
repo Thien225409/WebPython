@@ -28,8 +28,8 @@ SEED_SQL = [
     """
     INSERT INTO [dbo].[Products] (Name, Price, Stock, Decription, ImageURL)
     VALUES
-         (N'Ba chỉ thượng hạng', 160000, 30, N'Mỡ & nạc xen kẽ hoàn hảo', '/static/images/suon_thuong_hang.png'),
-        (N'Nạc vai ngon',      150000, 20, N'Nạc vai mềm, ít mỡ, phù hợp xào', '/static/images/thit_vai.png')
+         (N'Ba chỉ thượng hạng', 160000, 30, N'Mỡ & nạc xen kẽ hoàn hảo', '/public/images/suon_thuong_hang.png'),
+        (N'Nạc vai ngon',      150000, 20, N'Nạc vai mềm, ít mỡ, phù hợp xào', '/public/images/thit_vai.png')
     ;
     """
 ]

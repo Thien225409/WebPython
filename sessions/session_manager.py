@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timedelta
 
 # Đường dẫn file lưu session
-SESSION_FILE = os.path.join(os.path.dirname(__file__), 'sessions.json')
+SESSION_FILE = os.path.join(os.getcwd(), 'sessions.json')
 _sessions = {}
 
 #Tải sessions từ file

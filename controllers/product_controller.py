@@ -86,6 +86,10 @@ def create(request):
     image   = data.get('image_url', [''])[0]
 
     # Simple validation
+    try:
+        price = float(data.get('price', [''])[0])
+    except ValueError:
+        price = 0
     if not name or price <= 0:
         # Nếu lỗi, render lại form cùng error
         html = render_template('product_form.html', {

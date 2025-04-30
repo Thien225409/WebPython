@@ -10,4 +10,4 @@ def static_handler(request):
     data = open(fp, 'rb').read()
     return '200 OK', [('Content-Type', ctype or 'application/octet-stream')], data.decode('latin-1')
 
-add_route('GET', r'^/static/.*$', static_handler)
+add_route('GET', r'^/public/.*$', static_handler)

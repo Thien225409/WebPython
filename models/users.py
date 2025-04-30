@@ -9,11 +9,12 @@ class User:
     ORM lớp User với các phương thức CRUD cơ bản,
     đăng ký và xác thực mật khẩu hashed.
     """
-    def __init__(self, user_id: int, username: str, password_hash: str, created_at: datetime):
+    def __init__(self, user_id: int, username: str, password_hash: str, created_at: datetime, is_admin: bool = False):
         self.user_id        = user_id
         self.username       = username
         self._password_hash = password_hash
         self.created_at     = created_at
+        self.is_admin       = is_admin 
     
     @classmethod
     def find_by_username(cls, username: str) -> Optional['User']:
@@ -23,8 +24,8 @@ class User:
         conn = get_conn()
         cur = conn.cursor()
         cur.execute(
-            "SELECT UserID, Username, PasswordHash, CreatedAt"
-            " FROM dbo.Users WHERE Username = ?;",
+            "SELECT UserID, Username, PasswordHash, CreatedAt, IsAdmin "
+            "FROM dbo.Users WHERE Username = ?;",
             (username,)
         )
         row = cur.fetchone()
@@ -35,7 +36,8 @@ class User:
             user_id       = row.UserID,
             username      = row.Username,
             password_hash = row.PasswordHash,
-            created_at    = row.CreatedAt
+            created_at    = row.CreatedAt,
+            is_admin      = bool(row.IsAdmin)
         )
     @classmethod
     def find_by_id(cls, user_id: int) -> Optional['User']:
@@ -45,7 +47,7 @@ class User:
         conn = get_conn()
         cur = conn.cursor()
         cur.execute(
-            "SELECT UserID, Username, PasswordHash, CreatedAt"
+            "SELECT UserID, Username, PasswordHash, CreatedAt, IsAdmin"
             " FROM dbo.Users WHERE UserID = ?;",
             (user_id,)
         )
@@ -57,7 +59,8 @@ class User:
             user_id       = row.UserID,
             username      = row.Username,
             password_hash = row.PasswordHash,
-            created_at    = row.CreatedAt
+            created_at    = row.CreatedAt,
+            is_admin      = bool(row.IsAdmin)
         )
     @classmethod
     def register(cls, username: str, password: str) -> 'User':

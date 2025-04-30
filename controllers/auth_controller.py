@@ -80,7 +80,7 @@ def login(request):
         ]
         return '303 See Other', headers, ''
     # Sai thông tin: trả lại form với lỗi
-    token = parse_qs(request.headers.get('Cookie',''))['csrf_token']
+    token = parse_cookies(request.headers.get('Cookie','')).get('csrf_token', '')
     html = render_template('login.html', {
         'error': 'Tên đăng nhập hoặc mật khẩu không đúng.',
         'csrf_token': token

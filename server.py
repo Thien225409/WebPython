@@ -53,12 +53,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                     raw = request.headers.get('Cookie', '')
                     cookies = parse_cookies(raw)
                     sid = cookies.get('session_id')
+                    request.user = None
                     if sid:
                         sess = get_session(sid)
-                        request.user = User.find_by_id(sess['user_id']) if sess else None
-                    else:
-                        request.user = None
-                    
+                        if sess:
+                            request.user = User.find_by_id(sess['user_id'])
                     # ------------------------------------------------------
                     # Trả về response cho CLIENT
                     status, headers, response = handler(request)
