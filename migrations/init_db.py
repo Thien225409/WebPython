@@ -2,6 +2,7 @@
 from migrations.products import init_schema as init_prod_schema, seed_data as seed_prod
 from migrations.users    import init_schema as init_user_schema, seed_data as seed_user
 from migrations.sessions import init_schema as init_session_schema, seed_data as seed_session 
+from migrations.add_fk_sessions_users import init_schema as init_fk_sessions_users_schema
 def main():
     # Products
     print("=== Khởi tạo Products ===")
@@ -18,6 +19,11 @@ def main():
     print("\n=== Khởi tạo Sessions ===")
     init_session_schema()
     seed_session()
+    print("Hoàn tất khởi tạo database")
+    
+    # FK Sessions Users
+    print("\n=== Khởi tạo FK Sessions Users ===")
+    init_fk_sessions_users_schema()
     print("Hoàn tất khởi tạo database")
 if __name__ == '__main__':
     main()

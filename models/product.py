@@ -39,7 +39,7 @@ class Product:
                 name        = row.Name,
                 price       = float(row.Price),
                 stock       = row.Stock,
-                decription = row.Decription,
+                decription  = row.Decription,
                 image_url   = row.ImageURL
             )
             products.append(prod)
@@ -88,6 +88,7 @@ class Product:
         )
         # OUTPUT INSERTED.<PK> sẽ trả về một recordset, fetchone()[0] là ID mới
         row = cursor.fetchone()
+        conn.close()
         new_id = int(row[0])
         print(f"[DEBUG] Created product ID: {new_id}")  # ✅ In ra ID được tạo
         product = Product.find_by_id(new_id)

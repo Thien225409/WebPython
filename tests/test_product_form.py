@@ -122,5 +122,6 @@ def test_session_expire():
         conn.commit()
     except Exception:
         pass
+    conn.close()
     # Khi gọi get_session, session phải bị coi là hết hạn
     assert get_session(sid) is None
