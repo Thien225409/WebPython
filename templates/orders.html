@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Đơn hàng – Meat Shop{% endblock %}
+
+{% block content %}
+  <h1>Đơn hàng của bạn</h1>
+
+  {% if message %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endif %}
+
+  {% if orders %}
+    <ul class="orders-list">
+      {% for o in orders %}
+        <li>
+          <a href="/orders/{{ o.Id }}">Đơn #{{ o.Id }}</a>
+          — {{ o.CreatedAt }} — Tổng: {{ "{:,.0f}".format(o.Total) }}₫
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Bạn chưa có đơn hàng nào.</p>
+    <a href="/" class="btn">Quay lại mua sắm</a>
+  {% endif %}
+{% endblock %}

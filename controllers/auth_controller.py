@@ -85,7 +85,26 @@ def login(request) -> tuple:
     """
     # GET: hiển thị form
     if request.method == 'GET':
-        return render_form('login.html', request)
+        # Đọc flash (nếu có)
+        raw = request.headers.get('Cookie', '')
+        cookies = parse_cookies(raw)
+        message = cookies.get('flash')
+        # Sinh CSRF
+        csrf = gen_csrf_token()
+        headers = [
+            ('Content-Type','text/html; charset=utf-8'),
+            ('Set-Cookie', f'csrf_token={csrf}; Path=/; HttpOnly; SameSite=Lax')
+        ]
+        # Xóa flash ngay sau khi đọc
+        if message:
+            headers.append(('Set-Cookie', 'flash=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax'))
+
+        body = render_template('login.html', {
+            'csrf_token': csrf,
+            'message': message,
+            'next': request.query.get('next', ['/'])[0]
+        }, request=request)
+        return '200 OK', headers, body
 
     # POST: xác thực CSRF
     if not verify_csrf(request):

@@ -14,7 +14,7 @@ SCHEMA_SQL = """
     END
 """
 
-def init_schema():
+def init_fk_sessions_users_schema():
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute(SCHEMA_SQL)

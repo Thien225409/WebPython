@@ -17,7 +17,7 @@ CREATE TABLE dbo.Users (
 );
 """
 
-def init_schema():
+def init_user_schema():
     """
     Tạo bảng Users nếu chưa tồn tại.
     """
@@ -29,7 +29,7 @@ def init_schema():
     print("✅ Schema Users đã tồn tại hoặc vừa được tạo.")
 
 
-def seed_data():
+def seed_user():
     """
     Seed tài khoản admin nếu chưa có.
     ADMIN và ADMIN_PASSWORD lấy từ config.py.

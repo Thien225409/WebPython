@@ -173,4 +173,248 @@
     color: #64748b;
     background: #fff;
   }
-  
+
+  /* ================= Cart Orders ================= */
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+  }
+  .cart-table th, .cart-table td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+  }
+  .cart-total {
+    text-align: right;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .orders-list {
+    list-style: none;
+    padding: 0;
+  }
+  .orders-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+  }
+  .alert {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+  }
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border: 1px solid #333;
+    border-radius: 0.25rem;
+  }
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+/* ============= Login Page Layout ============= */
+/* Kéo nền beige full-width và chia 2 cột */
+.login-page {
+  display: flex;
+  background-color: #f5e5c0;
+  min-height: calc(90vh - 64px); /* trừ header */
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Cột trái: logo/ảnh ===== */
+/* Bỏ nền trắng, để thấm nền beige của .login-page */
+.login-sidebar {
+  flex: 0 0 45%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Kích thước logo */
+.login-sidebar img {
+  width: auto;
+  max-width: 80%;
+  height: auto;
+}
+
+/* ===== Cột phải: form nằm trên nền beige ===== */
+.login-panel {
+  flex: 0 0 55%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Khung form trắng nổi bật trên nền beige */
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* QR callout */
+.qr-callout {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  background: #fff8e1;
+  border: 1px solid #ffca28;
+  color: #ff8f00;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+.qr-callout::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #ffca28;
+}
+
+/* Tiêu đề */
+.login-card .login-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Inputs & button */
+.login-card .form-group {
+  margin-bottom: 1rem;
+}
+.login-card .form-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 0.75rem;
+  border: 1px solid #dce1e5;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #334155;
+}
+.login-card .form-input::placeholder {
+  color: #94a3b8;
+}
+.login-card .btn-block {
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin-top: 0.5rem;
+  background: #ee4d2d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.login-card .btn-block:hover {
+  background: #d1411e;
+}
+
+/* Links phụ trợ */
+.login-card .aux-links {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+.login-card .aux-links a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+.login-card .aux-links .sep {
+  margin: 0 0.5rem;
+  color: #cbd5e1;
+}
+
+/* Separator “HOẶC” */
+.login-card .separator {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+}
+.login-card .separator::before,
+.login-card .separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+.login-card .separator span {
+  margin: 0 0.75rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Social buttons */
+.login-card .social-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+.login-card .btn-social {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dce1e5;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.875rem;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.login-card .btn-social:hover {
+  background: #f1f5f9;
+}
+.login-card .btn-facebook { color: #1877f2; }
+.login-card .btn-google   { color: #db4437; }
+
+/* Lỗi */
+.login-card .alert-error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Responsive: Ẩn sidebar trên mobile */
+@media (max-width: 768px) {
+  .login-sidebar {
+    display: none;
+  }
+  .login-panel {
+    flex: 1;
+    padding: 1rem;
+  }
+  .login-card {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+}

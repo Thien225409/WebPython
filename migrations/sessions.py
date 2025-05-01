@@ -22,7 +22,7 @@ IF NOT EXISTS (
 CREATE INDEX IX_Sessions_ExpiresAt ON dbo.Sessions(ExpiresAt);
 """
 
-def init_schema():
+def init_session_schema():
     """
     Tạo bảng Sessions nếu chưa tồn tại.
     """
@@ -33,7 +33,7 @@ def init_schema():
     conn.close()
     print("✅ Schema Sessions đã tồn tại hoặc vừa được tạo.")
 
-def seed_data():
+def seed_session():
     """
     (Không cần seed dữ liệu cho bảng Sessions, vì session tạo động khi user login.)
     Nhưng ở đây ta có thể xoá sạch các session đã hết hạn ngay khi khởi migrations.

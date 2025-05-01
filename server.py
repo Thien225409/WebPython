@@ -9,6 +9,8 @@ from controllers.auth_controller import parse_cookies
 import routes.auth_routes
 import routes.product_routes
 import routes.static_routes
+import routes.cart_routes
+import routes.order_routes
 
 from routes.router import ROUTES
 class Request:
@@ -70,8 +72,18 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     
                     # Viết body ra socket (nếu có)
-                    if response:
-                        self.wfile.write(response.encode())
+                    if response is not None:
+                        # Nếu response là chuỗi, phải encode về bytes
+                        ctype = dict(headers).get('Content-Type', '')
+                        if isinstance(response, (bytes, bytearray)):
+                            # Với dữ liệu nhị phân (ví dụ html binary), ghi trực tiếp
+                            self.wfile.write(response)
+                        elif ctype.startswith('image/'):
+                            # Ảnh: đã decode Latin-1, bây giờ encode lại Latin-1
+                            self.wfile.write(response.encode('latin-1'))
+                        else:
+                            # Text (HTML, CSS, JS…): encode UTF-8
+                            self.wfile.write(response.encode('utf-8'))
                     return
 
         self.send_error(404, 'Page not found')

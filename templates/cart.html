@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Giỏ hàng – Meat Shop{% endblock %}
+
+{% block content %}
+    <h1>Giỏ hàng của bạn</h1>
+    {% if cart_items %}
+    <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in cart_items %}
+            <tr>
+              <td>{{ it.product.name }}</td>
+              <td>{{ "{:,.0f}".format(it.product.price) }}₫</td>
+              <td>{{ it.qty }}</td>
+              <td>{{ "{:,.0f}".format(it.subtotal) }}₫</td>
+              <td>
+                <form action="/cart/remove" method="post">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                  <input type="hidden" name="product_id" value="{{ it.product.product_id }}">
+                  <button type="submit" class="btn btn-sm">Xóa</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p class="cart-total"><strong>Tổng: {{ "{:,.0f}".format(cart_total) }}₫</strong></p>
+      <form action="/checkout" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="btn btn-primary">Thanh toán</button>
+      </form>
+    {% else %}
+        <p>Giỏ hàng trống.</p>
+        <a href="/" class="btn">Tiếp tục mua sắm</a>
+    {% endif %}
+{% endblock %}

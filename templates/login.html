@@ -2,30 +2,57 @@
 {% block title %}Đăng nhập – Meat Shop{% endblock %}
 
 {% block content %}
-  <h1>Đăng nhập</h1>
+<div class="login-page">
+  <!-- Banner hoặc có thể bỏ nếu không muốn -->
+  <div class="login-sidebar">
+    <img src="/public/images/logo.png" alt="Ưu đãi Meat Shop">
+  </div>
 
-  {% if error %}
-    <p class="alert alert-error">{{ error }}</p>
-  {% endif %}
+  <!-- Panel form trên nền beige full-width -->
+  <div class="login-panel">
+    <div class="login-card">
+      <div class="qr-callout">
+        Đăng nhập với mã QR
+        <span class="qr-icon">
+          <img src="/public/images/qr-icon.svg" alt="QR">
+        </span>
+      </div>
 
-  <form action="/login" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <h2 class="login-title">Đăng nhập</h2>
 
-    <p>
-      <label>Tên đăng nhập:<br>
-        <input type="text" name="username" required>
-      </label>
-    </p>
+      {% if error %}
+        <div class="alert-error">{{ error }}</div>
+      {% endif %}
 
-    <p>
-      <label>Mật khẩu:<br>
-        <input type="password" name="password" required>
-      </label>
-    </p>
+      <form action="/login" method="post" class="auth-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-    <p>
-      <button type="submit">Đăng nhập</button>
-      <a href="/register">Chưa có tài khoản?</a>
-    </p>
-  </form>
+        <div class="form-group">
+          <input name="username" type="text" class="form-input"
+                 placeholder="Email / Tên đăng nhập" required>
+        </div>
+
+        <div class="form-group">
+          <input name="password" type="password" class="form-input"
+                 placeholder="Mật khẩu" required>
+        </div>
+
+        <button type="submit" class="btn-block">Đăng nhập</button>
+      </form>
+
+      <div class="aux-links">
+        <a href="/forgot-password">Quên mật khẩu?</a>
+        <span class="sep">|</span>
+        <a href="/register">Đăng ký</a>
+      </div>
+
+      <div class="separator"><span>HOẶC</span></div>
+
+      <div class="social-buttons">
+        <button type="button" class="btn-social btn-facebook">Facebook</button>
+        <button type="button" class="btn-social btn-google">Google</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

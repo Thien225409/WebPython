@@ -17,13 +17,12 @@
           <h2>{{ p.name }}</h2>
           <p class="price">{{ "{:,.0f}".format(p.price) }}₫</p>
 
-          {% if request.user and not request.user.is_admin %}
-            <form action="/cart/add" method="post">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-              <input type="hidden" name="product_id" value="{{ p.product_id }}">
-              <button type="submit">Thêm vào giỏ</button>
-            </form>
-          {% endif %}
+        
+          <form action="/cart/add" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="product_id" value="{{ p.product_id }}">
+            <button type="submit">Thêm vào giỏ</button>
+          </form>
 
           {% if request.user and request.user.is_admin %}
             <p>
