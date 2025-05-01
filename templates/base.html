@@ -9,7 +9,13 @@
 <body>
   <header class="site-header">
     <div class="logo">
-      <a href="/"><img src="/public/images/logo.png" alt="Meat Shop"></a>
+      <a href="/">
+        <img src="/public/images/logo.png" alt="Meat Shop">
+        <div class="logo-text">
+          <span class="site-name">Cửa hàng thịt lợn Thời Thu</span>
+          <span class="site-address">Địa chỉ: 123 Đường ABC, Quận XYZ, TP. HCM</span>
+        </div>
+      </a>
     </div>
     <nav class="main-nav">
       <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Trang chủ</a>

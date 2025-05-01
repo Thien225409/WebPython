@@ -33,6 +33,39 @@
     display: flex;
     align-items: center;
   }
+  /* --- Logo và phần text bên trong --- */
+.logo a {
+  display: flex;
+  align-items: center;
+  text-decoration: none; /* bỏ gạch chân */
+}
+
+.logo img {
+  width: 50px;   /* điều chỉnh kích thước logo */
+  height: 50px;
+  object-fit: contain;
+  margin-right: 12px;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.site-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #ffffff;  /* chữ trắng trên nền tối */
+}
+
+.site-address {
+  font-size: 0.875rem;
+  color: #cbd5e0;  /* chữ nhạt hơn để phân cấp */
+  margin-top: 2px;
+}
+
+  
   .site-header .main-nav .nav-link {
     color: #94a3b8;
     margin-left: 1.5rem;
