@@ -66,8 +66,11 @@ def register(request) -> tuple:
         )
         return '400 Bad Request', [('Content-Type', 'text/html; charset=utf-8')], html
 
-    # Thành công
-    return '303 See Other', [('Location', '/login')], ''
+    # Thành công: set cookie flash + redirect về login
+    headers = [
+        ('Set-Cookie',  'flash=Đăng ký thành công; Path=/; HttpOnly; SameSite=Lax')
+    ]
+    return '303 See Other',headers, ''
 
 # GET & POST /login
 def login(request) -> tuple:

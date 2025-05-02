@@ -19,9 +19,11 @@
       </div>
 
       <h2 class="login-title">Đăng nhập</h2>
-
+      {% if message %}
+        <div class="alert alert-success">{{ message }}</div>
+      {% endif %}
       {% if error %}
-        <div class="alert-error">{{ error }}</div>
+        <div class="alert alert-error">{{ error }}</div>
       {% endif %}
 
       <form action="/login" method="post" class="auth-form">

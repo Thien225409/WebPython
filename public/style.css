@@ -19,20 +19,13 @@
   }
   
   /* ================= Header ================= */
-  .site-header {
-    background: #1e293b;
-    padding: 0.75rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .site-header .logo img {
-    height: 40px;
-  }
-  .site-header .main-nav {
-    display: flex;
-    align-items: center;
-  }
+.site-header {
+  background: #1e293b;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
   /* --- Logo và phần text bên trong --- */
 .logo a {
   display: flex;
@@ -66,208 +59,341 @@
 }
 
   
-  .site-header .main-nav .nav-link {
-    color: #94a3b8;
-    margin-left: 1.5rem;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  .site-header .main-nav .nav-link.active,
-  .site-header .main-nav .nav-link:hover {
-    color: #fff;
-  }
+.site-header .main-nav .nav-link {
+  color: #94a3b8;
+  margin-left: 1.5rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.site-header .main-nav .nav-link.active,
+.site-header .main-nav .nav-link:hover {
+  color: #fff;
+}
   
   /* ================= Cart Badge ================= */
-  .cart-link {
-    position: relative;
-    color: #94a3b8;
-    margin-left: 1.5rem;
-    font-size: 1.2rem;
-    transition: color 0.2s;
-  }
-  .cart-link:hover {
-    color: #fff;
-  }
-  .cart-link .badge {
-    position: absolute;
-    top: -6px;
-    right: -10px;
-    background: #ef4444;
-    color: #fff;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 0.75rem;
-  }
-  
-  /* ================= User Dropdown ================= */
-  .user-menu {
-    position: relative;
-    margin-left: 1.5rem;
-  }
-  .user-menu .menu-btn {
-    background: none;
-    border: none;
-    color: #94a3b8;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-  .user-menu .menu-btn:hover {
-    color: #fff;
-  }
-  .user-menu .dropdown {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 120%;
-    background: #fff;
-    border-radius: 0.25rem;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 10;
-  }
-  .user-menu .dropdown a {
-    display: block;
-    padding: 0.5rem 1rem;
-    color: #334155;
-    transition: background 0.2s;
-  }
-  .user-menu .dropdown a:hover {
-    background: #f1f5f9;
-  }
-  .user-menu:hover .dropdown {
-    display: block;
-  }
-  
-  /* ================= Main Content ================= */
-  .site-content {
-    padding: 2rem;
-  }
-  
-  /* ================= Product Grid & Card ================= */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
-  }
-  .product-card {
-    background: #fff;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s;
-  }
-  .product-card:hover {
-    transform: translateY(-4px);
-  }
-  .product-card img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-  }
-  .product-card .card-body {
-    padding: 1rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .product-card h2 {
-    font-size: 1.125rem;
-    margin-bottom: 0.5rem;
-    color: #0f172a;
-  }
-  .product-card p.price {
-    font-size: 1.25rem;
-    color: #16a34a;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  .product-card button {
-    padding: 0.5rem;
-    background: #2563eb;
-    color: #fff;
-    border: none;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .product-card button:hover {
-    background: #1e40af;
-  }
-  
-  /* ================= Footer ================= */
-  .site-footer {
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.875rem;
-    color: #64748b;
-    background: #fff;
-  }
+.cart-link {
+  position: relative;
+  color: #94a3b8;
+  margin-left: 1.5rem;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+.cart-link:hover {
+  color: #fff;
+}
+.cart-link .badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+}
 
-  /* ================= Cart Orders ================= */
-  .cart-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-  }
-  .cart-table th, .cart-table td {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    text-align: left;
-  }
-  .cart-total {
-    text-align: right;
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-  }
-  .orders-list {
-    list-style: none;
-    padding: 0;
-  }
-  .orders-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
-  }
-  .alert {
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-    border-radius: 0.25rem;
-  }
-  .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-  }
-  .btn {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    border: 1px solid #333;
-    border-radius: 0.25rem;
-  }
-  .btn-primary {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-  }
-  .btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-  }
+  /* ================= User Dropdown ================= */
+.user-menu {
+  position: relative;
+  margin-left: 1.5rem;
+}
+.user-menu .menu-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.user-menu .menu-btn:hover {
+  color: #fff;
+}
+.user-menu .dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 120%;
+  background: #fff;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+.user-menu .dropdown a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #334155;
+  transition: background 0.2s;
+}
+.user-menu .dropdown a:hover {
+  background: #f1f5f9;
+}
+.user-menu:hover .dropdown {
+  display: block;
+}
+
+/* ================= Main Content ================= */
+.site-content {
+  padding: 2rem;
+}
+
+  /* ================= Product Grid & Card ================= */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+.product-card {
+  background: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+}
+.product-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.product-card .card-body {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.product-card .card-body .actions {
+  display: flex;
+  gap: 0.5rem;     /* khoảng cách giữa hai nút */
+  margin-top: auto;/* đẩy xuống đáy card */
+}
+
+.product-card h2 {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+
+.product-card p.price {
+  font-size: 1.25rem;
+  color: #16a34a;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.product-card .actions button {
+  padding: 0.5rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex: 1;         /* nếu muốn hai nút đều rộng bằng nhau */
+}
+.product-card .actions button:hover {
+  background: #1e40af;
+}
+/* ================= Product Details ================= */
+.product-detail.container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* —— PHẦN TRÊN: ẢNH + INFO —— */
+.detail-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.detail-image img {
+  width: 100%;
+  max-width: 550px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.detail-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-info h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: #0f172a;
+}
+
+.detail-info .price {
+  font-size: 1.75rem;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.detail-info .stock {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* —— FORM ĐẶT HÀNG —— */
+.order-form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 200px;
+}
+
+.order-form label {
+  font-weight: 500;
+}
+
+.order-form input[type="number"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+}
+
+/* nhóm nút */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* nút Thêm vào giỏ */
+.btn-add {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-add:hover {
+  background-color: #13843a;
+}
+
+/* —— PHẦN DƯỚI: MÔ TẢ —— */
+.detail-bottom {
+  margin-top: 3rem;
+}
+
+.decription h2 {
+  font-size: 1.25rem;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.decription p {
+  line-height: 1.6;
+  color: #333;
+}
+/* ================= Footer ================= */
+.site-footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  background: #fff;
+}
+
+/* ================= Cart Orders ================= */
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+.cart-table th, .cart-table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+.cart-total {
+  text-align: right;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+.orders-list {
+  list-style: none;
+  padding: 0;
+}
+.orders-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+.alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+}
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+.alert-error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+}
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border: 1px solid #333;
+  border-radius: 0.25rem;
+}
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
 /* ============= Login Page Layout ============= */
 /* Kéo nền beige full-width và chia 2 cột */
 .login-page {
   display: flex;
   background-color: #f5e5c0;
   min-height: calc(90vh - 64px); /* trừ header */
-  margin: 0;
-  padding: 0;
+}
+/* —— Bố cục form đăng nhập —— */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* (tuỳ chọn) giãn cách các label/input nếu bạn xài thêm label */
+.auth-form label {
+  font-weight: 500;
+}
+
+/* (tuỳ chọn) thêm focus effect cho input */
+.form-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.5);
 }
 
 /* ===== Cột trái: logo/ảnh ===== */
-/* Bỏ nền trắng, để thấm nền beige của .login-page */
 .login-sidebar {
   flex: 0 0 45%;
   background: transparent;
@@ -319,6 +445,11 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 }
+.qr-callout .qr-icon {
+  display: inline-flex;
+  margin-left: 0.5rem;
+  align-items: center;
+}
 .qr-callout::after {
   content: '';
   position: absolute;
@@ -334,6 +465,20 @@
   text-align: center;
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
+}
+.login-card .alert-success {
+  padding: 0.75rem 1rem;
+  background-color: #d1fae5;
+  border: 1px solid #10b981;
+  color: #065f46;
+  border-radius: 4px;
+}
+.login-card .alert-error {
+  padding: 0.75rem 1rem;
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+  border-radius: 4px;
 }
 
 /* Inputs & button */

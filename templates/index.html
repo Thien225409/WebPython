@@ -17,12 +17,21 @@
           <h2>{{ p.name }}</h2>
           <p class="price">{{ "{:,.0f}".format(p.price) }}₫</p>
 
-        
-          <form action="/cart/add" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <input type="hidden" name="product_id" value="{{ p.product_id }}">
-            <button type="submit">Thêm vào giỏ</button>
-          </form>
+          <div class="actions">
+            <!-- Xem chi tiết -->
+            <form action="/product/{{ p.product_id }}" method="get">
+              <button type="submit">Xem chi tiết</button>
+            </form>
+
+            <!-- Thêm vào giỏ (chỉ user thường) -->
+            {% if request.user and not request.user.is_admin %}
+              <form action="/cart/add" method="post" style="margin:0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="product_id" value="{{ p.product_id }}">
+                <button type="submit">Thêm vào giỏ</button>
+              </form>
+            {% endif %}
+          </div>
 
           {% if request.user and request.user.is_admin %}
             <p>
