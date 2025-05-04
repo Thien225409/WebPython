@@ -24,7 +24,7 @@ class User:
         conn = get_conn()
         cur = conn.cursor()
         cur.execute(
-            "SELECT UserID, Username, PasswordHash, CreatedAt, IsAdmin "
+            "SELECT UserID, Username, PasswordHash, Email, CreatedAt, IsAdmin "
             "FROM dbo.Users WHERE Username = ?;",
             (username,)
         )
@@ -36,6 +36,7 @@ class User:
             user_id       = row.UserID,
             username      = row.Username,
             password_hash = row.PasswordHash,
+            email         = row.Email,
             created_at    = row.CreatedAt,
             is_admin      = bool(row.IsAdmin)
         )
@@ -47,7 +48,7 @@ class User:
         conn = get_conn()
         cur = conn.cursor()
         cur.execute(
-            "SELECT UserID, Username, PasswordHash, CreatedAt, IsAdmin"
+            "SELECT UserID, Username, PasswordHash, Email, CreatedAt, IsAdmin"
             " FROM dbo.Users WHERE UserID = ?;",
             (user_id,)
         )
@@ -59,11 +60,12 @@ class User:
             user_id       = row.UserID,
             username      = row.Username,
             password_hash = row.PasswordHash,
+            email         = row.Email,
             created_at    = row.CreatedAt,
             is_admin      = bool(row.IsAdmin)
         )
     @classmethod
-    def register(cls, username: str, password: str) -> 'User':
+    def register(cls, username: str, password: str, email: str) -> 'User':
         """
         Đăng ký user mới:
         - Hash mật khẩu
@@ -75,8 +77,8 @@ class User:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO dbo.Users (Username, PasswordHash) VALUES (?, ?);",
-                (username, pwd_hash)
+                "INSERT INTO dbo.Users (Username, PasswordHash, Email) VALUES (?, ?, ?);",
+                (username, pwd_hash, email)
             )
         except pyodbc.IntegrityError:
             conn.rollback()
@@ -92,5 +94,20 @@ class User:
         Xác thực mật khẩu nhập vào so với hash đã lưu.
         """
         return verify_password(self._password_hash, password)
+ 
+    @classmethod
+    def update_password(cls, user_id: int, new_password: str) -> None:
+        """
+        Cập nhật mật khẩu mới (hash) cho user theo user_id.
+        """
+        pwd_hash = hash_password(new_password)
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE dbo.Users SET PasswordHash = ? WHERE UserID = ?;",
+            (pwd_hash, user_id)
+        )
+        conn.close()
     def __repr__(self) -> str:
         return f"<User id={self.user_id} username={self.username}>"
+    

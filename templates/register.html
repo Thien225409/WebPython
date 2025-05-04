@@ -2,30 +2,49 @@
 {% block title %}Đăng ký – Meat Shop{% endblock %}
 
 {% block content %}
-  <h1>Đăng ký</h1>
+<div class="login-page">
+  <!-- cột trái: logo/ảnh -->
+  <div class="login-sidebar">
+    <img src="/public/images/logo.png" alt="Meat Shop">
+  </div>
 
-  {% if error %}
-    <p class="alert alert-error">{{ error }}</p>
-  {% endif %}
+  <!-- cột phải: form đăng ký -->
+  <div class="login-panel">
+    <div class="login-card">
+      <h2 class="login-title">Đăng ký</h2>
 
-  <form action="/register" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      {% if error %}
+        <div class="alert-error">{{ error }}</div>
+      {% endif %}
 
-    <p>
-      <label>Tên đăng nhập:<br>
-        <input type="text" name="username" required>
-      </label>
-    </p>
+      <form action="/register" method="post" class="auth-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-    <p>
-      <label>Mật khẩu:<br>
-        <input type="password" name="password" required>
-      </label>
-    </p>
+        <div class="form-group">
+          <input name="username" type="text" class="form-input" value="{{ username|default('') }}" placeholder="Tên đăng nhập" required>
+        </div>
 
-    <p>
-      <button type="submit">Đăng ký</button>
-      <a href="/login">Đã có tài khoản?</a>
-    </p>
-  </form>
+        <div class="form-group">
+          <input name="password" type="password" class="form-input" placeholder="Mật khẩu" required>
+        </div>
+
+        <div class="form-group">
+          <input name="confirm_password" type="password" class="form-input" placeholder="Nhập lại mật khẩu" required minlength="5">
+        </div>
+
+        <div class="form-group">
+          <input name="email" type="email" class="form-input" value="{{ email|default('') }}" placeholder="Email" required>
+        </div>
+
+        <button type="submit" class="btn-block">Đăng ký</button>
+      </form>
+
+      <div class="aux-links">
+        <a href="/login">Đã có tài khoản?</a>
+        <span class="sep">|</span>
+        <a href="/forgot-password">Quên mật khẩu?</a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
