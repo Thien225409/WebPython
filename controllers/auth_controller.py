@@ -113,7 +113,7 @@ def register(request) -> tuple:
 
     # Thành công: set cookie flash + redirect về login
     headers = [
-        ('Set-Cookie',  'flash=Đăng ký thành công; Path=/; HttpOnly; SameSite=Lax'),
+        ('Set-Cookie',  'flash=Complete register; Path=/; HttpOnly; SameSite=Lax'),
         ('Location', '/login')
     ]
     return '303 See Other',headers, ''

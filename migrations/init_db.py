@@ -7,6 +7,7 @@ from migrations.cart     import init_cart_schema
 from migrations.order    import init_order_schema
 from migrations.add_email_to_users import migrate_add_email
 from migrations.password_reset_token import init_password_reset_tokens_schema
+from migrations.payments import create_payments_table
 def main():
     # Products
     print("=== Khởi tạo Products ===")
@@ -48,5 +49,10 @@ def main():
     print("\n=== Khởi tạo Orders/OrderItems ===")
     init_order_schema()
     print("Hoàn tất khởi tạo đơn hàng")
+    
+    # Payments
+    print("\n=== Khởi tạo Payments ===")
+    create_payments_table()
+    print("Hoàn tất khởi tạo Payments")
 if __name__ == '__main__':
     main()

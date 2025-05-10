@@ -1,0 +1,102 @@
+.product-detail.container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* —— PHẦN TRÊN: ẢNH + INFO —— */
+.detail-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.detail-image img {
+  width: 100%;
+  max-width: 550px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.detail-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-info h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: #0f172a;
+}
+
+.detail-info .price {
+  font-size: 1.75rem;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.detail-info .stock {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* —— FORM ĐẶT HÀNG —— */
+.order-form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 200px;
+}
+
+.order-form label {
+  font-weight: 500;
+}
+
+.order-form input[type="number"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+}
+
+/* nhóm nút */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* nút Thêm vào giỏ */
+.btn-add {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-add:hover {
+  background-color: #13843a;
+}
+
+/* —— PHẦN DƯỚI: MÔ TẢ —— */
+.detail-bottom {
+  margin-top: 3rem;
+}
+
+.decription h2 {
+  font-size: 1.25rem;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.decription p {
+  line-height: 1.6;
+  color: #333;
+}

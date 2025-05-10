@@ -1,3 +1,4 @@
+import os
 CONN_STR = (
     "DRIVER={ODBC Driver 17 for SQL Server};"
     "SERVER=localhost,1433;"
@@ -18,3 +19,9 @@ SMTP_PORT     = 587
 SMTP_USER     = 'nguyenvanthienkf3232@gmail.com'
 SMTP_PASSWORD = 'nguyenvanthien14062004'
 APP_HOST      = 'http://localhost:8000'
+
+
+MERCHANT_QR_CODE_URL = os.getenv(
+    'MERCHANT_QR_CODE_URL',
+    '/public/images/mbbank_qr.png'
+)

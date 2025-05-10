@@ -1,8 +1,10 @@
+from models.payment import Payment
 from models.product import Product
 from utils.csrf import gen_csrf_token, verify_csrf
 from utils.template_engine import render_template
 from models.order import Order
 from models.cart import Cart
+from config import MERCHANT_QR_CODE_URL
 def list(request):
     """
     Hiển thị danh sách đơn hàng của user.
@@ -52,8 +54,63 @@ def checkout(request):
             )
             total += p.price * qty
     # Tạo đơn hàng và xóa sản phẩm vừa thực hiện thanh toán
-    Order.create(user_id, items, total)
+    order_id = Order.create(user_id, items, total)
+    
+    # 5) Lưu Payment cho QR: 
+    #    gateway_session_id = 'QR_<order_id>' để phân biệt với các phương thức khác
+    Payment.create(
+        order_id           = order_id,
+        gateway_session_id = f'QR_{order_id}',
+        amount             = total,
+        status             = 'paid'
+    )
     for pid in raw_items.keys():
         Cart.remove_item(user_id, pid)
-    return '303 See Other', [('Location', '/orders')], 'Hiện bạn chưa đăng nhập.'
+    # sau khi tạo xong → sang trang chi tiết đơn mới
+    return '303 See Other', [('Location', f'/orders/{order_id}')], ''
+
+def checkout_view(request):
+    """
+    GET /checkout
+    Hiển thị giỏ hàng, tổng tiền, hình QR và form xác nhận.
+    """
+    if not request.user:
+        # Chưua đăng nhập thì chuyển về trang login
+        return '303 See Other', [('Location', '/login')], ''
     
+    user_id = request.user.user_id
+    raw_items = Cart.get_items(user_id)
+    
+    items = []
+    total = 0
+    for pid, qty in raw_items.items():
+        p = Product.find_by_id(pid)
+        if p:
+            subtotal = p.price * qty
+            items.append({
+                'product':  p,
+                'qty':      qty,
+                'subtotal': subtotal
+            })
+            total += subtotal
+            
+    # Sinh CSRF token cho form POST
+    csrf = gen_csrf_token()
+    
+    headers = [
+        ('Content-Type', 'text/html; charset=utf-8'),
+        ('Set-Cookie',    f'csrf_token={csrf}; Path=/; HttpOnly; SameSite=Lax')
+    ]
+    body = render_template(
+        'checkout.html',
+        {
+            'cart_items':   items,
+            'cart_total':   total,
+            'csrf_token':   csrf,
+            'qr_code_url':  MERCHANT_QR_CODE_URL
+        },
+        request=request
+    )
+    
+    return '200 OK', headers, body
+        

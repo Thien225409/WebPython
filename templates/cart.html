@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% block head_extra %}
+  <link rel="stylesheet" href="/public/cart.css">
+{% endblock %}
 {% block title %}Giỏ hàng – Meat Shop{% endblock %}
-
 {% block content %}
     <h1>Giỏ hàng của bạn</h1>
     {% if cart_items %}
@@ -29,10 +31,7 @@
         </tbody>
       </table>
       <p class="cart-total"><strong>Tổng: {{ "{:,.0f}".format(cart_total) }}₫</strong></p>
-      <form action="/checkout" method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <button type="submit" class="btn btn-primary">Thanh toán</button>
-      </form>
+      <a href="/checkout" class="btn btn-primary">Thanh toán</a>
     {% else %}
         <p>Giỏ hàng trống.</p>
         <a href="/product" class="btn">Tiếp tục mua sắm</a>

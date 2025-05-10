@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block head_extra %}
+  <link rel="stylesheet" href="/public/checkout.css">
+{% endblock %}
+{% block title %}Thanh toán – Meat Shop{% endblock %}
+{% block content %}
+  <h1>Thanh toán đơn hàng</h1>
+
+  {% if cart_items %}
+    <ul class="checkout-list">
+      {% for it in cart_items %}
+        <li>
+          {{ it.product.name }} – SL: {{ it.qty }} – Thành tiền: {{ "{:,.0f}".format(it.subtotal) }}₫
+        </li>
+      {% endfor %}
+    </ul>
+    <p class="checkout-total"><strong>Tổng: {{ "{:,.0f}".format(cart_total) }}₫</strong></p>
+
+    <section class="qr-section">
+      <h2>Quét mã QR để thanh toán</h2>
+      <img src="{{ qr_code_url }}" alt="Mã QR thanh toán" class="qr-image"/>
+    </section>
+
+    <form action="/checkout" method="post" class="checkout-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit" class="btn btn-primary">
+        Tôi đã thanh toán qua QR
+      </button>
+    </form>
+  {% else %}
+    <p>Giỏ hàng trống.</p>
+    <a href="/product" class="btn">Tiếp tục mua sắm</a>
+  {% endif %}
+{% endblock %}

@@ -9,10 +9,11 @@ class User:
     ORM lớp User với các phương thức CRUD cơ bản,
     đăng ký và xác thực mật khẩu hashed.
     """
-    def __init__(self, user_id: int, username: str, password_hash: str, created_at: datetime, is_admin: bool = False):
+    def __init__(self, user_id: int, username: str, password_hash: str, email: str, created_at: datetime, is_admin: bool = False):
         self.user_id        = user_id
         self.username       = username
         self._password_hash = password_hash
+        self.email          = email
         self.created_at     = created_at
         self.is_admin       = is_admin 
     

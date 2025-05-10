@@ -1,0 +1,27 @@
+.checkout-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.checkout-total {
+  text-align: right;
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.qr-section {
+  text-align: center;
+  margin: 2em 0;
+}
+
+.qr-section .qr-image {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+}
+
+.checkout-form {
+  text-align: center;
+  margin-top: 1rem;
+}

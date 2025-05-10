@@ -35,7 +35,7 @@ class Order:
         cursor = conn.cursor()
         # Tạo Order
         cursor.execute (
-            "INSERT INTO dbo.Orders (UserId, Total) OUTPUT INSERTES.Id VALUES (?, ?)",
+            "INSERT INTO dbo.Orders (UserId, Total) OUTPUT INSERTED.Id VALUES (?, ?)",
             (user_id, total)
         )
         order_id = cursor.fetchone()[0]

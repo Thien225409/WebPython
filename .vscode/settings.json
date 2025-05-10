@@ -1,0 +1,7 @@
+{
+    "python.testing.pytestArgs": [
+        "controllers"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
